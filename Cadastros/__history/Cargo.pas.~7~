@@ -1,0 +1,111 @@
+unit Cargo;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+
+type
+  TfrmCargo = class(TForm)
+    Image1: TImage;
+    btnNovo: TButton;
+    btnSalvar: TButton;
+    btnEditar: TButton;
+    btnExcluir: TButton;
+    edtCodigo: TEdit;
+    Label2: TLabel;
+    edtNome: TEdit;
+    DBGrid1: TDBGrid;
+    procedure btnExcluirClick(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure btnNovoClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure DBGrid1CellClick(Column: TColumn);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmCargo: TfrmCargo;
+
+implementation
+
+{$R *.dfm}
+
+uses modulo;
+
+procedure TfrmCargo.btnEditarClick(Sender: TObject);
+begin
+if (edtNome.Text <> '') then
+  begin
+    { SALVAR DADOS }
+    MessageDlg('Alterado com Sucesso', mtInformation, mbOKCancel, 0);
+    edtNome.Enabled := False;
+    btnEditar.Enabled := False;
+    btnExcluir.Enabled := False;
+  end
+  else
+  begin
+    MessageDlg('Preencha os Campos', mtInformation, mbOKCancel, 0);
+    edtNome.SetFocus;
+  end;
+end;
+
+procedure TfrmCargo.btnExcluirClick(Sender: TObject);
+begin
+if MessageDlg('Deseja Excluir o Registro?', mtConfirmation, mbYesNo, 0) = mrYes
+  then
+  begin
+    if edtCodigo.Text <> '' then
+    begin
+      { SALVAR DADOS }
+      MessageDlg('Excluído com Sucesso', mtInformation, mbOKCancel, 0);
+      edtNome.Enabled := False;
+      btnEditar.Enabled := False;
+      btnExcluir.Enabled := False;
+    end
+    else
+    begin
+      MessageDlg('Selecione um registro para exclusão!', mtInformation,
+        mbOKCancel, 0);
+      edtNome.SetFocus;
+    end;
+  end;
+end;
+
+procedure TfrmCargo.btnNovoClick(Sender: TObject);
+begin
+  edtNome.Enabled := True;
+  edtNome.Text := '';
+  btnSalvar.Enabled := True;
+  edtNome.SetFocus;
+end;
+
+procedure TfrmCargo.btnSalvarClick(Sender: TObject);
+begin
+if (edtNome.Text <> '') then
+  begin
+    { SALVAR DADOS }
+    MessageDlg('Salvo com Sucesso', mtInformation, mbOKCancel, 0);
+    edtNome.Enabled := False;
+    btnSalvar.Enabled := False;
+  end
+  else
+  begin
+    MessageDlg('Preencha os Campos', mtInformation, mbOKCancel, 0);
+    edtNome.SetFocus;
+  end;
+end;
+
+procedure TfrmCargo.DBGrid1CellClick(Column: TColumn);
+begin
+  edtNome.Enabled := True;
+  btnExcluir.Enabled := True;
+  btnEditar.Enabled := True;
+end;
+
+end.

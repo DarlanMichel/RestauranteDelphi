@@ -1,0 +1,122 @@
+object DataModulo: TDataModulo
+  OldCreateOrder = False
+  OnCreate = DataModuleCreate
+  Height = 347
+  Width = 552
+  object FDConnection1: TFDConnection
+    Params.Strings = (
+      'User_Name=sysdba'
+      'Password=masterkey'
+      
+        'Database=C:\Users\Carlos\Documents\Embarcadero\Studio\Projects\S' +
+        'istema Restaurante\Win32\Debug\db\BDRES.FDB'
+      'DriverID=FB')
+    Connected = True
+    LoginPrompt = False
+    Left = 32
+    Top = 16
+  end
+  object FDPhysFBDriverLink1: TFDPhysFBDriverLink
+    Left = 136
+    Top = 16
+  end
+  object FDGUIxWaitCursor1: TFDGUIxWaitCursor
+    Provider = 'Forms'
+    Left = 240
+    Top = 16
+  end
+  object tbCargo: TFDTable
+    Active = True
+    IndexFieldNames = 'ID'
+    Connection = FDConnection1
+    UpdateOptions.UpdateTableName = 'CARGO'
+    TableName = 'CARGO'
+    Left = 24
+    Top = 88
+    object tbCargoID: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object tbCargoNOME: TStringField
+      DisplayWidth = 50
+      FieldName = 'NOME'
+      Origin = 'NOME'
+    end
+  end
+  object dsCargo: TDataSource
+    DataSet = tbCargo
+    Left = 80
+    Top = 88
+  end
+  object tbFuncionarios: TFDTable
+    Active = True
+    IndexFieldNames = 'ID'
+    Connection = FDConnection1
+    UpdateOptions.UpdateTableName = 'FUNCIONARIOS'
+    TableName = 'FUNCIONARIOS'
+    Left = 160
+    Top = 88
+    object tbFuncionariosID: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'ID'
+      Origin = 'ID'
+      Required = True
+    end
+    object tbFuncionariosNOME: TStringField
+      DisplayLabel = 'Nome'
+      FieldName = 'NOME'
+      Origin = 'NOME'
+      Required = True
+      Size = 50
+    end
+    object tbFuncionariosCPF: TStringField
+      FieldName = 'CPF'
+      Origin = 'CPF'
+      Required = True
+      EditMask = '000\.000\.000\-00;1;_'
+    end
+    object tbFuncionariosTELEFONE: TStringField
+      DisplayLabel = 'Telefone'
+      FieldName = 'TELEFONE'
+      Origin = 'TELEFONE'
+      EditMask = '!\(99\)00000-0000;1;_'
+    end
+    object tbFuncionariosENDERECO: TStringField
+      DisplayLabel = 'Endere'#231'o'
+      FieldName = 'ENDERECO'
+      Origin = 'ENDERECO'
+      Size = 100
+    end
+    object tbFuncionariosCARGO: TStringField
+      DisplayLabel = 'Cargo'
+      FieldName = 'CARGO'
+      Origin = 'CARGO'
+      Size = 25
+    end
+    object tbFuncionariosUSUARIO: TStringField
+      DisplayLabel = 'Usu'#225'rio'
+      FieldName = 'USUARIO'
+      Origin = 'USUARIO'
+      Required = True
+    end
+    object tbFuncionariosSENHA: TStringField
+      DisplayLabel = 'Senha'
+      FieldName = 'SENHA'
+      Origin = 'SENHA'
+      Required = True
+    end
+    object tbFuncionariosDATA: TSQLTimeStampField
+      DisplayLabel = 'Data'
+      FieldName = 'DATA'
+      Origin = '"DATA"'
+    end
+  end
+  object dsFuncionarios: TDataSource
+    DataSet = tbFuncionarios
+    Left = 240
+    Top = 88
+  end
+end

@@ -1,0 +1,263 @@
+unit Funcionarios;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.jpeg, Vcl.ExtCtrls, Data.DB,
+  Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.Mask, System.Rtti,
+  System.Bindings.Outputs, Vcl.Bind.Editors, Data.Bind.EngExt,
+  Vcl.Bind.DBEngExt, Data.Bind.Components, Data.Bind.DBScope, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+
+type
+  TfrmFuncionarios = class(TForm)
+    Image1: TImage;
+    Label1: TLabel;
+    rbNome: TRadioButton;
+    rbCPF: TRadioButton;
+    edtBuscarNome: TEdit;
+    Label2: TLabel;
+    edtNome: TEdit;
+    Label3: TLabel;
+    Label4: TLabel;
+    edtEndereco: TEdit;
+    Label5: TLabel;
+    Label6: TLabel;
+    cbxCargo: TComboBox;
+    DBGrid1: TDBGrid;
+    btnNovo: TButton;
+    btnSalvar: TButton;
+    btnEditar: TButton;
+    btnExcluir: TButton;
+    edtCpf: TMaskEdit;
+    edtTelefone: TMaskEdit;
+    edtBuscarCpf: TMaskEdit;
+    edtCodigo: TEdit;
+    Label7: TLabel;
+    edtUsuario: TEdit;
+    edtSenha: TEdit;
+    Label8: TLabel;
+    BindSourceDB1: TBindSourceDB;
+    BindingsList1: TBindingsList;
+    LinkControlToField1: TLinkControlToField;
+    LinkControlToField2: TLinkControlToField;
+    LinkControlToField3: TLinkControlToField;
+    LinkControlToField4: TLinkControlToField;
+    LinkControlToField5: TLinkControlToField;
+    LinkControlToField6: TLinkControlToField;
+    LinkControlToField7: TLinkControlToField;
+    FDQuery1: TFDQuery;
+    procedure rbCPFClick(Sender: TObject);
+    procedure rbNomeClick(Sender: TObject);
+    procedure btnNovoClick(Sender: TObject);
+    procedure DBGrid1CellClick(Column: TColumn);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure cbxCargoChange(Sender: TObject);
+  private
+    { Private declarations }
+    procedure carregarComboBox;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmFuncionarios: TfrmFuncionarios;
+
+implementation
+
+{$R *.dfm}
+
+uses modulo;
+
+procedure HabilitarCampos();
+begin
+  with frmFuncionarios do
+  begin
+    edtNome.Enabled := True;
+    edtCpf.Enabled := True;
+    edtTelefone.Enabled := True;
+    edtEndereco.Enabled := True;
+    cbxCargo.Enabled := True;
+    edtSenha.Enabled := True;
+    edtUsuario.Enabled := True;
+  end;
+end;
+
+procedure LimparCampos();
+begin
+  with frmFuncionarios do
+  begin
+    edtNome.Text := '';
+    edtCpf.Text := '';
+    edtTelefone.Text := '';
+    edtEndereco.Text := '';
+    edtSenha.Text := '';
+    edtUsuario.Text := '';
+  end;
+end;
+
+procedure DesabilitarCampos();
+begin
+  with frmFuncionarios do
+  begin
+    LimparCampos();
+    edtNome.Enabled := False;
+    edtCpf.Enabled := False;
+    edtTelefone.Enabled := False;
+    edtEndereco.Enabled := False;
+    cbxCargo.Enabled := False;
+    edtSenha.Enabled := False;
+    edtUsuario.Enabled := False;
+  end;
+end;
+
+procedure TfrmFuncionarios.btnEditarClick(Sender: TObject);
+begin
+  if (edtNome.Text <> '') and (edtCpf.Text <> '   .   .   -  ') then
+  begin
+    { SALVAR DADOS }
+    MessageDlg('Alterado com Sucesso', mtInformation, mbOKCancel, 0);
+    DesabilitarCampos();
+    btnEditar.Enabled := False;
+    btnExcluir.Enabled := False;
+  end
+  else
+  begin
+    MessageDlg('Preencha os Campos', mtInformation, mbOKCancel, 0);
+    edtNome.SetFocus;
+  end;
+end;
+
+procedure TfrmFuncionarios.btnExcluirClick(Sender: TObject);
+begin
+
+  if MessageDlg('Deseja Excluir o Registro?', mtConfirmation, mbYesNo, 0) = mrYes
+  then
+  begin
+    if edtCodigo.Text <> '' then
+    begin
+      { EXCLUIR DADOS }
+      MessageDlg('Excluído com Sucesso', mtInformation, mbOKCancel, 0);
+      DesabilitarCampos();
+      btnEditar.Enabled := False;
+      btnExcluir.Enabled := False;
+    end
+    else
+    begin
+      MessageDlg('Selecione um registro para exclusão!', mtInformation,
+        mbOKCancel, 0);
+      edtNome.SetFocus;
+    end;
+  end;
+
+end;
+
+procedure TfrmFuncionarios.btnNovoClick(Sender: TObject);
+var iCodigo : Integer;
+begin
+  HabilitarCampos();
+  LimparCampos();
+  btnSalvar.Enabled := True;
+  edtNome.SetFocus;
+  DataModulo.tbFuncionarios.Insert;
+  FDQuery1.SQL.Clear;
+    FDQuery1.SQL.text := 'SELECT MAX(ID) CODIGO FROM funcionarios';
+    FDQuery1.Close;
+    FDQuery1.Open;
+    iCodigo := FDQuery1.FieldByName('CODIGO').AsInteger +1;
+    edtCodigo.Text := IntToStr(iCodigo);
+  DataModulo.tbFuncionarios.FieldByName('id').Value := StrToInt(iCodigo);
+  DataModulo.tbFuncionarios.FieldByName('data').Value := DateToStr(Date);
+  btnNovo.Enabled := False;
+  DBGrid1.Enabled := False;
+end;
+
+procedure TfrmFuncionarios.btnSalvarClick(Sender: TObject);
+begin
+  if (edtNome.Text <> '') and (edtCpf.Text <> '   .   .   -  ') then
+  begin
+    { SALVAR DADOS }
+    DataModulo.tbFuncionarios.Post;
+    MessageDlg('Salvo com Sucesso', mtInformation, mbOKCancel, 0);
+    DesabilitarCampos();
+    btnSalvar.Enabled := False;
+    btnNovo.Enabled := True;
+    DBGrid1.Enabled := True;
+  end
+  else
+  begin
+    MessageDlg('Preencha os Campos', mtInformation, mbOKCancel, 0);
+    edtNome.SetFocus;
+  end;
+end;
+
+procedure TfrmFuncionarios.carregarComboBox;
+begin
+  with DataModulo.tbCargo do begin
+  Active := False;
+  Active := True;
+    if not IsEmpty then
+    begin
+       while not Eof do
+        begin
+          cbxCargo.Items.Add(FieldByName('nome').AsString);
+          Next;
+        end;
+    end;
+  end;
+end;
+
+procedure TfrmFuncionarios.cbxCargoChange(Sender: TObject);
+begin
+  DataModulo.tbFuncionarios.FieldByName('cargo').Value := cbxCargo.Text;
+end;
+
+procedure TfrmFuncionarios.DBGrid1CellClick(Column: TColumn);
+begin
+  HabilitarCampos();
+  btnExcluir.Enabled := True;
+  btnEditar.Enabled := True;
+  cbxCargo.Text := DataModulo.tbFuncionarios.FieldByName('cargo').Value;
+end;
+
+procedure TfrmFuncionarios.FormShow(Sender: TObject);
+begin
+  btnNovo.Enabled := True;
+  btnSalvar.Enabled := False;
+  btnEditar.Enabled := False;
+  btnExcluir.Enabled := False;
+  DataModulo.tbFuncionarios.Active := False;
+  DataModulo.tbFuncionarios.Active := True;
+  carregarComboBox;
+end;
+
+procedure TfrmFuncionarios.rbCPFClick(Sender: TObject);
+begin
+  if rbCPF.Checked = True then
+  begin
+    edtBuscarNome.Text := '';
+    edtBuscarNome.Visible := False;
+    edtBuscarCpf.Text := '';
+    edtBuscarCpf.Visible := True;
+  end;
+end;
+
+procedure TfrmFuncionarios.rbNomeClick(Sender: TObject);
+begin
+  if rbNome.Checked = True then
+  begin
+    edtBuscarCpf.Text := '';
+    edtBuscarCpf.Visible := False;
+    edtBuscarNome.Text := '';
+    edtBuscarNome.Visible := True;
+  end;
+end;
+
+end.

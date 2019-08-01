@@ -1,0 +1,66 @@
+unit modulo;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB,
+  FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.UI, FireDAC.Phys.IBBase,
+  Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet;
+
+type
+  TDataModulo = class(TDataModule)
+    FDConnection1: TFDConnection;
+    FDPhysFBDriverLink1: TFDPhysFBDriverLink;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    tbCargo: TFDTable;
+    dsCargo: TDataSource;
+    tbCargoID: TIntegerField;
+    tbCargoNOME: TStringField;
+    tbFuncionarios: TFDTable;
+    dsFuncionarios: TDataSource;
+    tbFuncionariosID: TIntegerField;
+    tbFuncionariosNOME: TStringField;
+    tbFuncionariosCPF: TStringField;
+    tbFuncionariosTELEFONE: TStringField;
+    tbFuncionariosENDERECO: TStringField;
+    tbFuncionariosCARGO: TStringField;
+    tbFuncionariosUSUARIO: TStringField;
+    tbFuncionariosSENHA: TStringField;
+    tbFuncionariosDATA: TSQLTimeStampField;
+    procedure DataModuleCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DataModulo: TDataModulo;
+  nomeUsuario: String;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+procedure TDataModulo.DataModuleCreate(Sender: TObject);
+begin
+  {Conectando ao banco de dados local}
+  FDConnection1.Params.Database := 'db\BDRES.FDB';
+  FDConnection1.Params.UserName := 'SYSDBA';
+  FDConnection1.Params.Password := 'masterkey';
+  {FDPhysFBDriverLink1.VendorLib := GetCurrentDir + '\lib\libmySQL.dll'}
+  FDConnection1.Connected := True;
+
+  {Informações das tabelas - via Código}
+  tbCargo.TableName := 'CARGO';
+  tbCargo.Active := True;
+  tbFuncionarios.TableName := 'FUNCIONARIOS';
+  tbFuncionarios.Active := True;
+end;
+
+end.

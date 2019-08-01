@@ -1,0 +1,55 @@
+unit Login;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  TFrmLogin = class(TForm)
+    ImgBack: TImage;
+    EdtUsuarioNome: TEdit;
+    EdtSenha: TEdit;
+    EdtUsuario: TEdit;
+    btnEntrar: TSpeedButton;
+    btnFechar: TSpeedButton;
+    procedure FormCreate(Sender: TObject);
+    procedure btnFecharClick(Sender: TObject);
+    procedure btnEntrarClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmLogin: TFrmLogin;
+
+implementation
+
+{$R *.dfm}
+
+procedure TFrmLogin.btnEntrarClick(Sender: TObject);
+begin
+      if (EdtUsuario.Text = '') or (EdtSenha.Text = '') then
+          ShowMessage('Preencha os campos');
+
+end;
+
+procedure TFrmLogin.btnFecharClick(Sender: TObject);
+begin
+       FrmLogin.Close;
+end;
+
+procedure TFrmLogin.FormCreate(Sender: TObject);
+begin
+      {COR HEXADECIMAL= Inverter os codigos}
+      {FrmLogin.Color := $663B15}
+
+
+
+end;
+
+end.
